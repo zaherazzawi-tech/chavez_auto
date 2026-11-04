@@ -2,15 +2,6 @@
 (function(){
 "use strict";
 
-/* ==========================================================
-   FORM SETUP: create a free form at https://formspree.io,
-   then paste your form ID below (the part after /f/).
-   Example: const FORMSPREE_ID = "xyzabcd1";
-   Until it is set, the form asks visitors to call instead.
-   ========================================================== */
-const FORMSPREE_ID = "";
-
-
 /* ---------- Mobile menu ---------- */
 const menuBtn = document.querySelector('.menu-btn'), nav = document.getElementById('mainnav');
 menuBtn.addEventListener('click', () => {
@@ -35,7 +26,7 @@ function pacificNow(){
 function shopStatus(){
   const {day, mins} = pacificNow();
   const h = HOURS[day];
-  if (h && mins >= h[0]*60 && mins < h[1]*60) return {open:true, text:'Open now until ' + fmtH(h[1])};
+  if (h && mins >= h[0]*60 && mins < h[1]*60) return {open:true, text:'Open now until ' + fmtH(h[1]), until: fmtH(h[1])};
   // find next opening
   for (let i = 0; i < 8; i++){
     const d = (day + i) % 7, hh = HOURS[d];
@@ -57,11 +48,10 @@ function renderHours(){
     const h = HOURS[d];
     return '<tr class="' + (d === today ? 'today' : '') + '"><td>' + DAYS[d] + '</td><td>' + (h ? fmtH(h[0]) + ' – ' + fmtH(h[1]) : 'Closed') + '</td></tr>';
   }).join('');
-  const note = document.getElementById('closedNote');
-  if (!s.open){
-    note.hidden = false;
-    note.textContent = 'We’re closed right now. Send your message here and we’ll reply when we open' + (s.at ? ' at ' + s.at + ' ' + s.when : '') + '.';
-  } else note.hidden = true;
+  document.getElementById('visitDot').className = 'dot ' + (s.open ? 'open' : 'closed');
+  document.getElementById('visitStatus').textContent = s.open
+    ? 'Open now until ' + s.until + '. Come on by.'
+    : 'Closed right now.' + (s.at ? ' We open at ' + s.at + ' ' + s.when + '.' : '');
   return s;
 }
 renderHours();
@@ -240,49 +230,4 @@ document.querySelectorAll('.card[data-go]').forEach(c => c.addEventListener('cli
   document.getElementById('gallery').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
 }));
 selectCat('body');
-
-/* ---------- Contact form ---------- */
-const form = document.getElementById('contactForm'), statusEl = document.getElementById('formStatus'), sendBtn = document.getElementById('sendBtn');
-
-function validate(){
-  let ok = true;
-  const f = name => form.elements[name], wrap = el => el.closest('.field');
-  [...form.querySelectorAll('.field')].forEach(x => x.classList.remove('invalid'));
-  if (!f('name').value.trim()){ wrap(f('name')).classList.add('invalid'); ok = false; }
-  const phone = f('phone').value.trim(), email = f('email').value.trim();
-  if (!phone && !email){ wrap(f('phone')).classList.add('invalid'); ok = false; }
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ wrap(f('email')).classList.add('invalid'); ok = false; }
-  if (!f('message').value.trim()){ wrap(f('message')).classList.add('invalid'); ok = false; }
-  if (!ok){ const first = form.querySelector('.field.invalid input, .field.invalid textarea'); if (first) first.focus(); }
-  return ok;
-}
-
-form.addEventListener('submit', async e => {
-  e.preventDefault();
-  statusEl.className = 'form-status'; statusEl.textContent = '';
-  if (!validate()) return;
-  if (form.elements._gotcha && form.elements._gotcha.value) return; // spam bot filled the hidden field
-  const s = shopStatus();
-  const data = new FormData(form);
-  data.append('_subject', 'Website message from ' + form.elements.name.value.trim() + (s.open ? '' : ' (after hours)'));
-  data.append('sent_after_hours', s.open ? 'No' : 'Yes');
-  sendBtn.disabled = true; sendBtn.textContent = 'Sending…';
-  try {
-    if (!FORMSPREE_ID) throw new Error('not-configured');
-    const res = await fetch('https://formspree.io/f/' + FORMSPREE_ID, {method:'POST', body:data, headers:{'Accept':'application/json'}});
-    if (!res.ok) throw new Error('send-failed');
-    const first = escapeHTML(form.elements.name.value.trim().split(' ')[0]);
-    document.getElementById('formPanel').innerHTML =
-      '<div class="sent" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>' +
-      '<h3>Message sent</h3><p>Thanks, ' + first + '. ' +
-      (s.open ? 'We’ll get back to you shortly.' : 'We’ll get back to you after we open' + (s.at ? ' at ' + s.at + ' ' + s.when : '') + '.') +
-      '</p><p>Need us sooner? Call <a href="tel:+19496331794">(949) 633-1794</a>.</p></div>';
-  } catch(err){
-    sendBtn.disabled = false; sendBtn.textContent = 'Send message';
-    statusEl.className = 'form-status bad';
-    statusEl.innerHTML = 'Your message couldn’t be sent online right now. Please call <a href="tel:+19496331794">(949) 633-1794</a>, and leave a voicemail if we’re closed.';
-  }
-});
-
-function escapeHTML(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 })();

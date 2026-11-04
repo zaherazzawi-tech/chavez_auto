@@ -40,7 +40,7 @@
       <ul>
         <li><a href="#services">Services</a></li>
         <li><a href="#gallery">Before &amp; after</a></li>
-        <li><a href="#contact">Hours &amp; contact</a></li>
+        <li><a href="#contact">Hours &amp; visit</a></li>
         <li><a href="#location">Location</a></li>
         <li><a class="call" href="tel:+19496331794">Call (949) 633-1794</a></li>
       </ul>
@@ -57,7 +57,7 @@
         <p class="lede">Chavez Automotive Repair is a clean, friendly shop on Obrero Drive. Bodywork, paint and mechanical repairs, done right and priced fairly.</p>
         <div class="hero-actions">
           <a class="btn btn-red" href="tel:+19496331794"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1L6.6 10.8z"/></svg>Call for an appointment</a>
-          <a class="btn btn-ghost" href="#contact">Send us a message</a>
+          <a class="btn btn-ghost" href="#location">Walk-ins welcome</a>
         </div>
         <div class="status-pill"><span class="dot" id="heroDot"></span><span id="heroStatus">Checking hours…</span></div>
       </div>
@@ -105,7 +105,7 @@
         <button class="tab" role="tab" id="tab-repair" aria-controls="pairs" data-cat="repair" aria-selected="false" tabindex="-1">Repairs &amp; maintenance</button>
       </div>
       <div class="pairs" id="pairs" role="tabpanel" aria-labelledby="tab-body"></div>
-      <p class="gal-cta">Have damage you’d like us to look at? <a href="#contact">Send a message</a> or call <a href="tel:+19496331794">(949) 633-1794</a>.</p>
+      <p class="gal-cta">Want a quote on damage like this? Call <a href="tel:+19496331794">(949) 633-1794</a> or stop by the shop.</p>
     </div>
   </section>
 
@@ -122,7 +122,7 @@
     <div class="wrap">
       <div class="sec-head">
         <h2 id="contactTitle">Hours &amp; Contact</h2>
-        <p>Shop closed? Leave a message any time and we’ll get back to you first thing when we open.</p>
+        <p>Walk-ins are welcome during open hours. Call ahead if you’d like us to expect you.</p>
       </div>
       <div class="contact-grid">
         <div class="panel">
@@ -135,40 +135,15 @@
           </div>
         </div>
 
-        <div class="panel" id="formPanel">
-          <h3>Send the shop a message</h3>
-          <p class="closed-note" id="closedNote" hidden></p>
-          <form id="contactForm" novalidate>
-            <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
-            <div class="row">
-              <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name" required><span class="err">Enter your name so we know who to ask for.</span></div>
-              <div class="field"><label for="f-phone">Phone</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel"><span class="err">Enter a phone number or an email address.</span></div>
-            </div>
-            <div class="row">
-              <div class="field"><label for="f-email">Email <span class="opt">(optional if you gave a phone)</span></label><input id="f-email" name="email" type="email" autocomplete="email"><span class="err">That email address doesn’t look complete.</span></div>
-              <div class="field"><label for="f-vehicle">Vehicle <span class="opt">(year, make, model)</span></label><input id="f-vehicle" name="vehicle" placeholder="2018 Honda Accord"></div>
-            </div>
-            <div class="field"><label for="f-service">What do you need?</label>
-              <select id="f-service" name="service">
-                <option>Body or collision repair</option>
-                <option>Paint, scratch or scuff repair</option>
-                <option>Mechanical repair or diagnosis</option>
-                <option>Maintenance or oil service</option>
-                <option>A quote or estimate</option>
-                <option>Something else</option>
-              </select>
-            </div>
-            <div class="field"><label for="f-msg">Message</label><textarea id="f-msg" name="message" required placeholder="Tell us what’s going on and when you’d like to bring the car in."></textarea><span class="err">Add a short description of what you need.</span></div>
-            <fieldset class="prefer" style="border:0;padding:0">
-              <legend class="sr-only">Best way to reach you</legend>
-              <span style="font-weight:600;font-size:15px">Best way to reach you:</span>
-              <label><input type="radio" name="prefer" value="Call" checked> Call</label>
-              <label><input type="radio" name="prefer" value="Text"> Text</label>
-              <label><input type="radio" name="prefer" value="Email"> Email</label>
-            </fieldset>
-            <button class="btn btn-red" type="submit" id="sendBtn">Send message</button>
-            <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
-          </form>
+        <div class="panel visit">
+          <h3>Call or stop by</h3>
+          <p class="visit-copy">The fastest way to get an accurate quote is to bring the car in. Walk-ins are welcome during open hours, or call and we’ll talk you through it.</p>
+          <div class="visit-actions">
+            <a class="btn btn-red btn-xl" href="tel:+19496331794"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1L6.6 10.8z"/></svg>Call (949) 633-1794</a>
+            <a class="btn btn-outline" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&amp;destination=25741+Obrero+Dr+Ste+F%2C+Mission+Viejo%2C+CA+92691"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>Get directions</a>
+          </div>
+          <div class="now visit-now"><span class="dot" id="visitDot"></span><span id="visitStatus">Checking…</span></div>
+          <p class="ask">Have a quick question? Email us at <a href="mailto:zaherdrazzawi@gmail.com?subject=Question%20from%20the%20website">zaherdrazzawi@gmail.com</a></p>
         </div>
       </div>
     </div>
@@ -199,6 +174,11 @@
     <span><a href="tel:+19496331794">(949) 633-1794</a></span>
   </div>
 </footer>
+
+<nav class="mobile-bar" aria-label="Quick actions">
+  <a class="mb-call" href="tel:+19496331794"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1L6.6 10.8z"/></svg>Call now</a>
+  <a class="mb-dir" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&amp;destination=25741+Obrero+Dr+Ste+F%2C+Mission+Viejo%2C+CA+92691"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>Directions</a>
+</nav>
 
 <script src="js/main.js" defer></script>
 </body>
