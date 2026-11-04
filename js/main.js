@@ -4,11 +4,16 @@
 
 /* ---------- Mobile menu ---------- */
 const menuBtn = document.querySelector('.menu-btn'), nav = document.getElementById('mainnav');
-menuBtn.addEventListener('click', () => {
-  const open = nav.classList.toggle('open');
+function setMenu(open){
+  nav.classList.toggle('open', open);
   menuBtn.setAttribute('aria-expanded', open);
-});
-nav.addEventListener('click', e => { if (e.target.tagName === 'A') { nav.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false'); }});
+  menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  document.documentElement.classList.toggle('menu-open', open); // locks page scroll behind the sheet
+}
+menuBtn.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+nav.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && nav.classList.contains('open')){ setMenu(false); menuBtn.focus(); }});
+matchMedia('(min-width: 861px)').addEventListener('change', e => { if (e.matches) setMenu(false); });
 document.getElementById('yr').textContent = new Date().getFullYear();
 
 /* ---------- Hours (Pacific time) ---------- */
@@ -213,7 +218,13 @@ function selectCat(cat, focus){
     const on = t.dataset.cat === cat;
     t.setAttribute('aria-selected', on);
     t.tabIndex = on ? 0 : -1;
-    if (on){ pairsEl.setAttribute('aria-labelledby', t.id); if (focus) t.focus(); }
+    if (on){
+      pairsEl.setAttribute('aria-labelledby', t.id);
+      if (focus) t.focus({preventScroll: true});
+      // on mobile the tabs scroll sideways: bring the active one into view without moving the page
+      const row = t.parentElement;
+      if (row.scrollWidth > row.clientWidth) row.scrollTo({left: t.offsetLeft - (row.clientWidth - t.offsetWidth) / 2, behavior: 'smooth'});
+    }
   });
   renderGallery(cat);
 }
@@ -230,4 +241,32 @@ document.querySelectorAll('.card[data-go]').forEach(c => c.addEventListener('cli
   document.getElementById('gallery').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
 }));
 selectCat('body');
+
+/* ---------- Mobile: service card dots ---------- */
+const cardRow = document.querySelector('.cards .grid'), cardEls = [...cardRow.children];
+const dots = document.createElement('div');
+dots.className = 'card-dots'; dots.setAttribute('aria-hidden', 'true');
+dots.innerHTML = cardEls.map(() => '<span></span>').join('');
+cardRow.after(dots);
+let dotFrame = 0;
+function updateDots(){
+  dotFrame = 0;
+  const step = cardEls[1].offsetLeft - cardEls[0].offsetLeft || 1, max = cardRow.scrollWidth - cardRow.clientWidth;
+  let i = Math.round(cardRow.scrollLeft / step);
+  if (max > 0 && cardRow.scrollLeft >= max - 2) i = cardEls.length - 1;
+  [...dots.children].forEach((d, n) => d.classList.toggle('on', n === i));
+}
+cardRow.addEventListener('scroll', () => { if (!dotFrame) dotFrame = requestAnimationFrame(updateDots); }, {passive: true});
+updateDots();
+
+/* ---------- Mobile: hide the floating action bar where the same buttons already show ---------- */
+const bar = document.querySelector('.mobile-bar');
+if (bar && 'IntersectionObserver' in window){
+  const inView = new Set();
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => e.isIntersecting ? inView.add(e.target) : inView.delete(e.target));
+    bar.classList.toggle('hide', inView.size > 0);
+  });
+  [document.querySelector('.map-card'), document.querySelector('footer')].forEach(el => el && io.observe(el));
+}
 })();
