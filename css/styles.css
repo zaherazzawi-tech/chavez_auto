@@ -223,19 +223,19 @@ footer a{color:#fff;text-decoration:none;font-weight:600}
   nav.main a.call{justify-content:center;min-height:56px;margin:0;padding:0 20px;border:0;border-radius:999px;font-size:18px;font-weight:700}
 
   /* Hero */
-  .hero{padding:40px 0 48px;background-position:72% center}
+  .hero{padding:72px 0 88px;background-position:72% center}
   .hero::before{background:linear-gradient(180deg,rgba(6,22,46,.9) 0%,rgba(6,22,46,.8) 55%,rgba(6,22,46,.62) 100%)}
   .hero-copy{padding-left:0;max-width:560px}
-  .stars{position:relative;font-size:13px;gap:6px;padding:4px 12px 4px 9px;margin-bottom:16px}
+  .stars{position:relative;font-size:13px;gap:6px;padding:4px 12px 4px 9px;margin-bottom:24px}
   .stars::after{content:"";position:absolute;inset:-8px 0}
   .hero h1{font-size:40px;line-height:1;letter-spacing:-.025em}
   .hero p.lede{display:none}
-  .hero h1{margin-bottom:28px}
+  .hero h1{margin-bottom:40px}
   .hero-actions{flex-direction:column;gap:4px}
   .hero-actions .btn-red{width:100%;min-height:54px;padding:0 24px;font-size:16px}
   .hero-actions .btn-ghost{align-self:center;min-height:44px;padding:0 8px;background:none;border:0;box-shadow:none;font-size:15px;color:#fff}
   .hero-actions .btn-ghost::after{content:"→";font-size:17px;transition:transform .2s}
-  .status-pill{margin-top:10px;font-size:14px;font-weight:500}
+  .status-pill{margin-top:16px;font-size:14px;font-weight:500}
   .status-pill .dot{width:8px;height:8px}
 
   /* Service cards: swipeable row */

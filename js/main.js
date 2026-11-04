@@ -260,6 +260,7 @@ cardRow.addEventListener('scroll', () => { if (!dotFrame) dotFrame = requestAnim
 updateDots();
 
 /* ---------- Mobile: hide the floating action bar where the same buttons already show ---------- */
+// (the hero call button, the map card and the footer). Starts hidden in the HTML so it never flashes on load.
 const bar = document.querySelector('.mobile-bar');
 if (bar && 'IntersectionObserver' in window){
   const inView = new Set();
@@ -267,6 +268,6 @@ if (bar && 'IntersectionObserver' in window){
     entries.forEach(e => e.isIntersecting ? inView.add(e.target) : inView.delete(e.target));
     bar.classList.toggle('hide', inView.size > 0);
   });
-  [document.querySelector('.map-card'), document.querySelector('footer')].forEach(el => el && io.observe(el));
-}
+  [document.querySelector('.hero-actions .btn-red'), document.querySelector('.map-card'), document.querySelector('footer')].forEach(el => el && io.observe(el));
+} else if (bar) bar.classList.remove('hide');
 })();
