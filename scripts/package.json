@@ -1,0 +1,11 @@
+{
+  "name": "chavez-site-scripts",
+  "private": true,
+  "description": "Tooling for the Chavez Automotive Repair site. Not part of the deployed page.",
+  "scripts": {
+    "optimize-images": "node optimize-images.js"
+  },
+  "devDependencies": {
+    "sharp": "0.34.3"
+  }
+}

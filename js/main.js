@@ -67,96 +67,102 @@ function renderHours(){
 renderHours();
 setInterval(renderHours, 60000);
 
-/* ---------- Before / after artwork (drawn placeholder of the red car) ---------- */
-let uid = 0;
-function scene(inner){
-  const k = 's' + (uid++);
-  return '<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">' +
-    '<defs><linearGradient id="' + k + 'w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9c0c9"/><stop offset="1" stop-color="#8f969f"/></linearGradient>' +
-    '<linearGradient id="' + k + 'f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f747b"/><stop offset="1" stop-color="#4b4f55"/></linearGradient></defs>' +
-    '<rect width="800" height="360" fill="url(#' + k + 'w)"/>' +
-    '<g opacity=".35" fill="#fff"><rect x="40" y="40" width="200" height="120" rx="4"/><rect x="560" y="40" width="200" height="120" rx="4"/></g>' +
-    '<rect x="0" y="352" width="800" height="12" fill="#2d6bbf" opacity=".55"/>' +
-    '<rect y="360" width="800" height="140" fill="url(#' + k + 'f)"/>' + inner + '</svg>';
-}
-function shade(hex, amt){
-  const n = parseInt(hex.slice(1),16);
-  let r = (n>>16)+amt, g = ((n>>8)&255)+amt, b = (n&255)+amt;
-  r=Math.max(0,Math.min(255,r)); g=Math.max(0,Math.min(255,g)); b=Math.max(0,Math.min(255,b));
-  return '#' + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
-}
-// o.damaged = true draws the crushed front end and broken headlight
-function car(o){
-  const id = 'c' + (uid++), c = o.color, dk = shade(c,-45), lt = shade(c,40);
-  const defs = '<linearGradient id="' + id + 'g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + lt + '"/><stop offset=".45" stop-color="' + c + '"/><stop offset="1" stop-color="' + dk + '"/></linearGradient>';
-  const bodyPath = 'M70 372 L84 318 Q98 296 170 286 L262 214 Q286 196 330 194 L500 194 Q548 196 584 224 L640 280 Q716 290 738 312 L752 352 Q756 378 736 384 L92 384 Q66 382 70 372Z';
-  let g = '<ellipse cx="410" cy="420" rx="360" ry="22" fill="#000" opacity=".35"/>';
-  g += '<path d="' + bodyPath + '" fill="url(#' + id + 'g)"/>';
-  // windows
-  g += '<path d="M290 222 L332 206 L414 206 L414 280 L238 280Z" fill="#26313f"/><path d="M430 206 L498 206 Q534 210 560 236 L596 280 L430 280Z" fill="#26313f"/>';
-  g += '<path d="M300 222 L330 212 L360 212 L310 270 L260 274Z" fill="#fff" opacity=".12"/>';
-  // door lines, handles
-  g += '<path d="M420 284 L420 378 M262 290 L262 378 M590 290 L600 378" stroke="' + dk + '" stroke-width="2.5" fill="none" opacity=".8"/>';
-  g += '<rect x="300" y="304" width="34" height="7" rx="3" fill="' + dk + '"/><rect x="458" y="304" width="34" height="7" rx="3" fill="' + dk + '"/>';
-  g += '<path d="M90 330 L740 326" stroke="#fff" stroke-width="2" opacity=".35"/>';
-  // lights
-  g += o.damaged ? '<path d="M712 300 L748 312 L746 330 L716 322Z" fill="#5a5f66"/><path d="M718 304 L730 318 L740 309 M726 322 L736 314" stroke="#222" stroke-width="2"/>' : '<path d="M712 300 L748 312 L746 330 L716 322Z" fill="#f4f1d8"/><path d="M718 304 L744 313" stroke="#fff" stroke-width="3"/>';
-  g += '<path d="M76 330 L96 322 L98 344 L74 348Z" fill="#c4161c"/>';
-  // bumpers
-  g += o.damaged ? '<path d="M690 350 L745 344 L758 372 L730 392 L700 386 L712 370Z" fill="#2c2f34"/>' : '<path d="M700 356 L752 352 L756 378 L700 384Z" fill="#2c2f34"/>';
-  g += '<path d="M70 356 L110 356 L110 384 L72 382Z" fill="#2c2f34"/>';
-  // wheels
-  [190,620].forEach(x => {
-    g += '<circle cx="' + x + '" cy="384" r="54" fill="#1b1d20"/><circle cx="' + x + '" cy="384" r="34" fill="#a9b0b8"/><circle cx="' + x + '" cy="384" r="10" fill="#555"/>';
-    for (let a = 0; a < 5; a++){ const r = a*72*Math.PI/180; g += '<line x1="' + x + '" y1="384" x2="' + (x+30*Math.cos(r)).toFixed(1) + '" y2="' + (384+30*Math.sin(r)).toFixed(1) + '" stroke="#7d848c" stroke-width="7"/>'; }
+/* ---------- Logo: use images/logo.png once it exists, otherwise keep the gauge + wordmark ---------- */
+document.querySelectorAll('.logo-img').forEach(img => {
+  const show = () => { img.hidden = false; img.closest('.logo').classList.add('has-logo'); };
+  const keep = () => { img.hidden = true; img.closest('.logo').classList.remove('has-logo'); };
+  if (img.complete && img.currentSrc) (img.naturalWidth ? show : keep)(); // settled before this script ran
+  img.addEventListener('load', show);
+  img.addEventListener('error', keep);
+});
+
+/* ---------- Our Work: grid + lightbox ---------- */
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const workGrid = document.getElementById('workGrid');
+const tiles = workGrid ? [...workGrid.querySelectorAll('.work-tile')] : [];
+const VISIBLE = 9;
+
+// More than 9 photos: show the first 9 and a "Show all photos" button for the rest
+const moreBtn = document.getElementById('workMore');
+if (moreBtn && tiles.length > VISIBLE){
+  tiles.slice(VISIBLE).forEach(t => t.hidden = true);
+  moreBtn.parentElement.hidden = false;
+  moreBtn.addEventListener('click', () => {
+    tiles.forEach(t => t.hidden = false);
+    moreBtn.setAttribute('aria-expanded', 'true');
+    moreBtn.parentElement.hidden = true;
+    tiles[VISIBLE].focus({preventScroll: true}); // keep the page where it is, move keyboard focus to the first new photo
   });
-  // front-end damage
-  if (o.damaged){
-    g += '<path d="M600 250 L650 282 L716 292 L700 316 L742 340 L700 352 L676 334 L654 360 L620 330 L600 344 Z" fill="' + dk + '"/>';
-    g += '<path d="M610 262 L636 300 L626 322 M650 292 L668 318 L690 304 M640 330 L662 342" stroke="#111" stroke-width="3" fill="none" opacity=".6"/>';
-    g += '<path d="M612 272 L640 288 L700 296" stroke="#fff" stroke-width="2" opacity=".5" fill="none"/>';
-    g += '<path d="M560 236 L600 280 L590 284" stroke="#e8eef5" stroke-width="3" fill="none"/><path d="M568 244 L584 270 M576 240 L590 262" stroke="#e8eef5" stroke-width="1.5" opacity=".8"/>';
-  }
-  return scene('<defs>' + defs + '</defs><g transform="translate(820,0) scale(-1,1)">' + g + '</g>');
 }
 
-/* ---------- Before / after slider ----------
-   One auto body pair. To use real photos, return <img> tags from b and a (see README). */
-const GALLERY_PAIR = {
-  title: 'Front-end collision',
-  text: 'Crushed fender, bumper and headlight replaced, hood line and panel gaps realigned.',
-  b: () => car({color:'#b3262c', damaged:true}),
-  a: () => car({color:'#b3262c'})
-};
-const knobSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg>';
-function renderSlider(el, p){
-  el.innerHTML =
-    '<figure class="pair">' +
-      '<div class="ba">' +
-        '<div class="layer after">' + p.a() + '</div>' +
-        '<div class="layer before">' + p.b() + '</div>' +
-        '<span class="tag b">BEFORE</span><span class="tag a">AFTER</span>' +
-        '<span class="bar"></span>' +
-        '<input type="range" min="0" max="100" value="50" aria-label="Compare before and after: ' + p.title + '">' +
-        '<span class="knob">' + knobSVG + '</span>' +
-      '</div>' +
-      '<figcaption><h3>' + p.title + '</h3><p>' + p.text + '</p></figcaption>' +
-    '</figure>';
-  const ba = el.querySelector('.ba'), input = ba.querySelector('input');
-  const set = v => ba.style.setProperty('--pos', v + '%');
-  input.addEventListener('input', () => set(input.value)); // keyboard (arrow keys) via the range input
-  // Pointer drag anywhere on the image (works with touch too)
-  let dragging = false;
-  const fromEvent = e => { const r = ba.getBoundingClientRect(); const v = Math.max(0, Math.min(100, (e.clientX - r.left) / r.width * 100)); input.value = v; set(v); };
-  ba.addEventListener('pointerdown', e => { dragging = true; ba.setPointerCapture(e.pointerId); fromEvent(e); });
-  ba.addEventListener('pointermove', e => { if (dragging) fromEvent(e); });
-  ['pointerup','pointercancel'].forEach(t => ba.addEventListener(t, () => dragging = false));
+const lb = document.getElementById('lightbox');
+if (lb && tiles.length){
+  const lbImg = lb.querySelector('.lb-img'), lbCount = lb.querySelector('.lb-count');
+  const btnClose = lb.querySelector('.lb-close'), btnPrev = lb.querySelector('.lb-prev'), btnNext = lb.querySelector('.lb-next');
+  let index = 0, opener = null;
+
+  function show(i){
+    index = (i + tiles.length) % tiles.length;
+    const t = tiles[index];
+    lbImg.classList.remove('ready');
+    lbImg.onload = () => lbImg.classList.add('ready');
+    lbImg.src = t.getAttribute('href');
+    lbImg.alt = t.querySelector('img').alt;
+    if (lbImg.complete) lbImg.classList.add('ready');
+    lbCount.textContent = (index + 1) + ' / ' + tiles.length;
+    // warm up the neighbours so prev/next feel instant
+    [index - 1, index + 1].forEach(n => { new Image().src = tiles[(n + tiles.length) % tiles.length].getAttribute('href'); });
+  }
+  function open(i, from){
+    opener = from;
+    show(i);
+    lb.hidden = false;
+    document.documentElement.classList.add('lb-open'); // locks page scroll, hides the floating bar
+    requestAnimationFrame(() => lb.classList.add('open'));
+    btnClose.focus({preventScroll: true});
+  }
+  function close(){
+    lb.classList.remove('open');
+    document.documentElement.classList.remove('lb-open');
+    const done = () => { lb.hidden = true; lbImg.removeAttribute('src'); };
+    if (reduceMotion.matches) done(); else setTimeout(done, 200);
+    if (opener) opener.focus({preventScroll: true});
+  }
+
+  tiles.forEach((t, i) => t.addEventListener('click', e => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey) return; // let "open in new tab" work
+    e.preventDefault();
+    open(i, t);
+  }));
+  btnClose.addEventListener('click', close);
+  btnPrev.addEventListener('click', () => show(index - 1));
+  btnNext.addEventListener('click', () => show(index + 1));
+  lb.addEventListener('click', e => { if (e.target === lb || e.target.classList.contains('lb-stage')) close(); }); // tap the dark area
+
+  lb.addEventListener('keydown', e => {
+    if (e.key === 'Escape'){ e.preventDefault(); close(); }
+    else if (e.key === 'ArrowLeft'){ e.preventDefault(); show(index - 1); }
+    else if (e.key === 'ArrowRight'){ e.preventDefault(); show(index + 1); }
+    else if (e.key === 'Tab'){ // keep focus inside the dialog
+      const f = [btnClose, btnPrev, btnNext], k = f.indexOf(document.activeElement);
+      e.preventDefault();
+      f[(k + (e.shiftKey ? f.length - 1 : 1)) % f.length].focus();
+    }
+  });
+
+  // Swipe left / right on touch screens
+  let sx = 0, sy = 0, tracking = false;
+  lb.addEventListener('touchstart', e => { if (e.touches.length !== 1) return; tracking = true; sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, {passive: true});
+  lb.addEventListener('touchend', e => {
+    if (!tracking) return; tracking = false;
+    const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.3) show(index + (dx < 0 ? 1 : -1));
+  }, {passive: true});
 }
-renderSlider(document.getElementById('baSlider'), GALLERY_PAIR);
 
 /* ---------- Story photos: show the built-in placeholder until a real photo exists ---------- */
 // A missing file (404) hides its <img> so the CSS placeholder behind it shows.
-// Dropping images/story-1.jpg, story-2.jpg or story-3.jpg in place makes them appear.
+// The photos live in images/story/ (made by scripts/optimize-images.js).
 document.querySelectorAll('.story-photo img').forEach(img => {
   const fail = () => { img.hidden = true; };
   if (img.complete && !img.naturalWidth && img.currentSrc) fail(); // already failed before this script ran
