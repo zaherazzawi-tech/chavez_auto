@@ -67,54 +67,151 @@ function renderHours(){
 renderHours();
 setInterval(renderHours, 60000);
 
-/* ---------- Logo: use images/logo.png once it exists, otherwise keep the gauge + wordmark ---------- */
+/* ---------- Logo: images/logo.png in the header, menu sheet and footer ---------- */
+// Each copy shows once it loads; the header copy also hides the gauge icon + wordmark.
+// If the file is missing, the images stay hidden and the gauge + wordmark stay.
 document.querySelectorAll('.logo-img').forEach(img => {
-  const show = () => { img.hidden = false; img.closest('.logo').classList.add('has-logo'); };
-  const keep = () => { img.hidden = true; img.closest('.logo').classList.remove('has-logo'); };
+  const show = () => { img.hidden = false; img.closest('.logo')?.classList.add('has-logo'); };
+  const keep = () => { img.hidden = true; img.closest('.logo')?.classList.remove('has-logo'); };
   if (img.complete && img.currentSrc) (img.naturalWidth ? show : keep)(); // settled before this script ran
   img.addEventListener('load', show);
   img.addEventListener('error', keep);
 });
 
-/* ---------- Our Work: grid + lightbox ---------- */
+/* ---------- Our Work: film strip ---------- */
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
-const workGrid = document.getElementById('workGrid');
-const tiles = workGrid ? [...workGrid.querySelectorAll('.work-tile')] : [];
-const VISIBLE = 9;
+const film = document.getElementById('film');
+const track = film && film.querySelector('.film-track');
+const frames = track ? [...track.querySelectorAll('.film-frame')] : []; // the real set (no copies)
+const SECONDS_PER_SET = 50; // how long one full set takes to pass by
 
-// More than 9 photos: show the first 9 and a "Show all photos" button for the rest
-const moreBtn = document.getElementById('workMore');
-if (moreBtn && tiles.length > VISIBLE){
-  tiles.slice(VISIBLE).forEach(t => t.hidden = true);
-  moreBtn.parentElement.hidden = false;
-  moreBtn.addEventListener('click', () => {
-    tiles.forEach(t => t.hidden = false);
-    moreBtn.setAttribute('aria-expanded', 'true');
-    moreBtn.parentElement.hidden = true;
-    tiles[VISIBLE].focus({preventScroll: true}); // keep the page where it is, move keyboard focus to the first new photo
+// Why the strip is paused right now (hover, finger, drag, keyboard focus, lightbox, off screen).
+// It slides only while this is empty.
+const holds = new Set();
+const hold = (why, on) => { on ? holds.add(why) : holds.delete(why); };
+
+if (film && frames.length){
+  let copies = [], x = 0, setW = 0, last = 0, raf = 0, running = false;
+
+  const measure = () => { setW = frames[frames.length - 1].offsetLeft + frames[frames.length - 1].offsetWidth - frames[0].offsetLeft; };
+  const wrapX = () => { if (setW){ x %= setW; if (x > 0) x -= setW; } }; // keep x in (-setW, 0]
+  const paint = () => { track.style.transform = 'translate3d(' + x + 'px,0,0)'; };
+
+  function tick(now){
+    raf = requestAnimationFrame(tick);
+    const dt = Math.min(now - (last || now), 64) / 1000; // cap long gaps (tab switch, jank)
+    last = now;
+    if (holds.size || !setW) return;
+    x -= setW / SECONDS_PER_SET * dt;
+    wrapX(); paint();
+  }
+
+  function start(){
+    if (running) return;
+    running = true;
+    // the copy makes the loop seamless; it is invisible to screen readers and skipped by Tab
+    copies = frames.map(f => {
+      const c = f.cloneNode(true);
+      c.setAttribute('aria-hidden', 'true'); c.tabIndex = -1;
+      c.querySelector('img').alt = ''; c.querySelector('img').loading = 'lazy';
+      return c;
+    });
+    track.append(...copies);
+    film.classList.add('is-running');
+    film.scrollLeft = 0;
+    measure(); x = 0; paint();
+    last = 0; raf = requestAnimationFrame(tick);
+  }
+  function stop(){ // reduced motion: plain scrollable strip
+    if (!running) return;
+    running = false;
+    cancelAnimationFrame(raf);
+    copies.forEach(c => c.remove()); copies = [];
+    film.classList.remove('is-running', 'is-dragging');
+    track.style.transform = '';
+    holds.clear();
+  }
+  const setMode = () => reduceMotion.matches ? stop() : start();
+  setMode();
+  reduceMotion.addEventListener('change', setMode);
+  addEventListener('resize', () => { if (running){ const f = setW ? x / setW : 0; measure(); x = f * setW; wrapX(); paint(); } });
+  // frames are fixed-size boxes, but measure again once fonts/images settle, just in case
+  addEventListener('load', () => { if (running) measure(); });
+
+  // Pause while the mouse is over it
+  film.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hold('hover', true); });
+  film.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hold('hover', false); });
+
+  // Drag / swipe to scrub. A finger resting on it pauses it; letting go resumes.
+  let downX = 0, startX = 0, dragging = false, pid = null, suppressClick = false;
+  film.addEventListener('pointerdown', e => {
+    if (!running || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    pid = e.pointerId; downX = e.clientX; startX = x; dragging = false;
+    hold('press', true);
   });
+  film.addEventListener('pointermove', e => {
+    if (e.pointerId !== pid) return;
+    const dx = e.clientX - downX;
+    if (!dragging && Math.abs(dx) > 6){
+      dragging = true;
+      film.classList.add('is-dragging');
+      try { film.setPointerCapture(pid); } catch (err) {}
+    }
+    if (dragging){ x = startX + dx; wrapX(); paint(); }
+  });
+  const release = e => {
+    if (e.pointerId !== pid) return;
+    pid = null;
+    if (dragging){ suppressClick = true; setTimeout(() => { suppressClick = false; }, 0); }
+    dragging = false;
+    film.classList.remove('is-dragging');
+    hold('press', false);
+  };
+  film.addEventListener('pointerup', release);
+  film.addEventListener('pointercancel', release); // e.g. the browser took over for a vertical page scroll
+  film.addEventListener('click', e => { if (suppressClick){ e.preventDefault(); e.stopPropagation(); } }, true);
+  film.addEventListener('dragstart', e => e.preventDefault());
+
+  // Keyboard: Tab onto a frame pauses the strip and brings that frame into view
+  film.addEventListener('focusin', e => {
+    if (!running || !e.target.matches(':focus-visible')) return; // keyboard focus only, not a mouse click
+    hold('focus', true);
+    const f = e.target.closest('.film-frame');
+    if (!f) return;
+    film.scrollLeft = 0; // the browser may try to scroll the clipped strip; the transform does the moving
+    const left = f.offsetLeft + x, right = left + f.offsetWidth;
+    // centre the real frame (not its copy); x stays within (-setW, 0], so no wrap is needed
+    if (left < 0 || right > film.clientWidth){ x = Math.min(0, -(f.offsetLeft - Math.max(0, (film.clientWidth - f.offsetWidth) / 2))); paint(); }
+  });
+  film.addEventListener('focusout', e => { if (!film.contains(e.relatedTarget)) hold('focus', false); });
+
+  // Don't animate while it's off screen
+  if ('IntersectionObserver' in window)
+    new IntersectionObserver(([en]) => hold('offscreen', !en.isIntersecting)).observe(film);
 }
 
+/* ---------- Lightbox (Our Work) ---------- */
 const lb = document.getElementById('lightbox');
-if (lb && tiles.length){
+if (lb && frames.length){
   const lbImg = lb.querySelector('.lb-img'), lbCount = lb.querySelector('.lb-count');
   const btnClose = lb.querySelector('.lb-close'), btnPrev = lb.querySelector('.lb-prev'), btnNext = lb.querySelector('.lb-next');
   let index = 0, opener = null;
 
   function show(i){
-    index = (i + tiles.length) % tiles.length;
-    const t = tiles[index];
+    index = (i + frames.length) % frames.length;
+    const t = frames[index];
     lbImg.classList.remove('ready');
     lbImg.onload = () => lbImg.classList.add('ready');
     lbImg.src = t.getAttribute('href');
     lbImg.alt = t.querySelector('img').alt;
     if (lbImg.complete) lbImg.classList.add('ready');
-    lbCount.textContent = (index + 1) + ' / ' + tiles.length;
+    lbCount.textContent = (index + 1) + ' / ' + frames.length;
     // warm up the neighbours so prev/next feel instant
-    [index - 1, index + 1].forEach(n => { new Image().src = tiles[(n + tiles.length) % tiles.length].getAttribute('href'); });
+    [index - 1, index + 1].forEach(n => { new Image().src = frames[(n + frames.length) % frames.length].getAttribute('href'); });
   }
   function open(i, from){
     opener = from;
+    hold('lightbox', true); // the film strip waits while the lightbox is open
     show(i);
     lb.hidden = false;
     document.documentElement.classList.add('lb-open'); // locks page scroll, hides the floating bar
@@ -127,13 +224,17 @@ if (lb && tiles.length){
     const done = () => { lb.hidden = true; lbImg.removeAttribute('src'); };
     if (reduceMotion.matches) done(); else setTimeout(done, 200);
     if (opener) opener.focus({preventScroll: true});
+    hold('lightbox', false);
   }
 
-  tiles.forEach((t, i) => t.addEventListener('click', e => {
-    if (e.metaKey || e.ctrlKey || e.shiftKey) return; // let "open in new tab" work
+  // Clicks on a frame (or its seamless-loop copy) open the matching photo
+  track.addEventListener('click', e => {
+    const f = e.target.closest('.film-frame');
+    if (!f || e.metaKey || e.ctrlKey || e.shiftKey) return; // let "open in new tab" work
     e.preventDefault();
-    open(i, t);
-  }));
+    const i = [...track.children].indexOf(f) % frames.length;
+    open(i, frames[i]); // focus returns to the real frame, never the hidden copy
+  });
   btnClose.addEventListener('click', close);
   btnPrev.addEventListener('click', () => show(index - 1));
   btnNext.addEventListener('click', () => show(index + 1));
@@ -160,6 +261,31 @@ if (lb && tiles.length){
   }, {passive: true});
 }
 
+/* ---------- Reviews: "Read more" on long reviews ---------- */
+// Long reviews are cut to about 6 lines. The button only shows when the text really is longer
+// than that at the current width, and is re-checked when the window size changes.
+const clampables = [...document.querySelectorAll('.rv-clamp')].map(text => ({ text, btn: document.querySelector('[aria-controls="' + text.id + '"]'), open: false }));
+function checkClamps(){
+  clampables.forEach(c => {
+    if (c.open) return;
+    c.text.classList.add('is-clamped');
+    const longer = c.text.scrollHeight > c.text.clientHeight + 4;
+    c.text.classList.toggle('is-clamped', longer);
+    c.btn.hidden = !longer;
+  });
+}
+clampables.forEach(c => c.btn.addEventListener('click', () => {
+  c.open = !c.open;
+  c.text.classList.toggle('is-clamped', !c.open);
+  c.btn.setAttribute('aria-expanded', c.open);
+  c.btn.textContent = c.open ? 'Show less' : 'Read more';
+  if (!c.open) checkClamps();
+}));
+checkClamps();
+let clampTimer = 0;
+addEventListener('resize', () => { clearTimeout(clampTimer); clampTimer = setTimeout(checkClamps, 150); });
+document.fonts && document.fonts.ready.then(checkClamps);
+
 /* ---------- Story photos: show the built-in placeholder until a real photo exists ---------- */
 // A missing file (404) hides its <img> so the CSS placeholder behind it shows.
 // The photos live in images/story/ (made by scripts/optimize-images.js).
@@ -170,22 +296,27 @@ document.querySelectorAll('.story-photo img').forEach(img => {
   img.addEventListener('load', () => { img.hidden = false; });
 });
 
-/* ---------- Mobile: service card dots ---------- */
-const cardRow = document.querySelector('.cards .grid'), cardEls = [...cardRow.children];
-const dots = document.createElement('div');
-dots.className = 'card-dots'; dots.setAttribute('aria-hidden', 'true');
-dots.innerHTML = cardEls.map(() => '<span></span>').join('');
-cardRow.after(dots);
-let dotFrame = 0;
-function updateDots(){
-  dotFrame = 0;
-  const step = cardEls[1].offsetLeft - cardEls[0].offsetLeft || 1, max = cardRow.scrollWidth - cardRow.clientWidth;
-  let i = Math.round(cardRow.scrollLeft / step);
-  if (max > 0 && cardRow.scrollLeft >= max - 2) i = cardEls.length - 1;
-  [...dots.children].forEach((d, n) => d.classList.toggle('on', n === i));
+/* ---------- Mobile: dots under the swipe rows (service cards, reviews) ---------- */
+function addDots(row){
+  if (!row || row.children.length < 2) return;
+  const items = [...row.children];
+  const dots = document.createElement('div');
+  dots.className = 'card-dots'; dots.setAttribute('aria-hidden', 'true');
+  dots.innerHTML = items.map(() => '<span></span>').join('');
+  row.after(dots);
+  let frame = 0;
+  function update(){
+    frame = 0;
+    const step = items[1].offsetLeft - items[0].offsetLeft || 1, max = row.scrollWidth - row.clientWidth;
+    let i = Math.round(row.scrollLeft / step);
+    if (max > 0 && row.scrollLeft >= max - 2) i = items.length - 1;
+    [...dots.children].forEach((d, n) => d.classList.toggle('on', n === i));
+  }
+  row.addEventListener('scroll', () => { if (!frame) frame = requestAnimationFrame(update); }, {passive: true});
+  update();
 }
-cardRow.addEventListener('scroll', () => { if (!dotFrame) dotFrame = requestAnimationFrame(updateDots); }, {passive: true});
-updateDots();
+addDots(document.querySelector('.cards .grid'));
+addDots(document.querySelector('.rv-grid'));
 
 /* ---------- Mobile: hide the floating action bar where the same buttons already show ---------- */
 // (the hero call button, the map card and the footer). Starts hidden in the HTML so it never flashes on load.

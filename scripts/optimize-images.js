@@ -7,13 +7,16 @@
 
     images/story/story-1.webp ...         Our Story frames (max 1600px long edge)
     images/gallery/work-01.webp ...       Our Work full-size (max 1600px long edge)
-    images/gallery/thumbs/work-01.webp    Our Work grid thumbnails (600x600 square crop)
+    images/gallery/thumbs/work-01.webp    Our Work film-strip frames (704x528, 4:3 crop)
+    images/logo.png                       the logo, transparent padding trimmed, 150px tall
+    images/apple-touch-icon.png           180x180 home-screen icon (logo on white)
 
   Sorting (by file name, or by sub-folder name):
     - names containing "story"   -> story photos. A name containing "main" comes first,
                                     then by the number in the name. The first 3 fill the
                                     Our Story frames; any extras are added to the gallery.
     - names containing "gallery" or "work" -> gallery photos, in number order.
+    - a name containing "logo"   -> the logo (a PNG with transparency). Only the first one is used.
 
   Every output is auto-rotated from its EXIF orientation and has ALL metadata removed
   (camera info, GPS location, etc.). Images are never enlarged.
@@ -33,7 +36,8 @@ const SRC = argSrc > -1 ? path.resolve(process.argv[argSrc + 1]) : path.resolve(
 const OUT_STORY = path.join(REPO, 'images', 'story');
 const OUT_GALLERY = path.join(REPO, 'images', 'gallery');
 const OUT_THUMBS = path.join(OUT_GALLERY, 'thumbs');
-const STORY_FRAMES = 3, MAX_EDGE = 1600, THUMB_W = 600, QUALITY = 80;
+const STORY_FRAMES = 3, MAX_EDGE = 1600, THUMB_W = 704, THUMB_H = 528, QUALITY = 80;
+const LOGO_H = 150; // about 2x the largest size it's shown at (72px in the mobile menu), so it stays sharp on retina screens
 const IMG = /\.(jpe?g|png|webp|heic|heif|tiff?|avif)$/i;
 
 function walk(dir) {
@@ -56,9 +60,10 @@ async function save(input, file, opts) {
   const all = walk(SRC);
   const story = all.filter(f => /story/i.test(rel(f)))
     .sort((a, b) => (/main/i.test(b) - /main/i.test(a)) || num(a) - num(b) || a.localeCompare(b));
+  const logo = all.find(f => /logo/i.test(path.basename(f)));
   const gallery = all.filter(f => !/story/i.test(rel(f)) && /gallery|work/i.test(rel(f)))
     .sort((a, b) => num(a) - num(b) || a.localeCompare(b));
-  const skipped = all.filter(f => !story.includes(f) && !gallery.includes(f));
+  const skipped = all.filter(f => !story.includes(f) && !gallery.includes(f) && f !== logo);
 
   const frames = story.slice(0, STORY_FRAMES);
   const work = gallery.concat(story.slice(STORY_FRAMES));
@@ -79,10 +84,21 @@ async function save(input, file, opts) {
   for (const [i, f] of work.entries()) {
     const out = 'work-' + String(i + 1).padStart(2, '0') + '.webp';
     const full = await save(f, path.join(OUT_GALLERY, out), fit);
-    // square center crop: the grid tiles are square
-    const thumb = await save(f, path.join(OUT_THUMBS, out), { width: THUMB_W, height: THUMB_W, fit: 'cover', withoutEnlargement: true });
+    // 4:3 center crop: the film-strip frames are 4:3
+    const thumb = await save(f, path.join(OUT_THUMBS, out), { width: THUMB_W, height: THUMB_H, fit: 'cover', withoutEnlargement: true });
     console.log('  ' + rel(f).padEnd(28) + ' -> images/gallery/' + out + '  ' + full + '   thumb ' + thumb);
   }
-  if (skipped.length) console.log('Skipped (name has no "story", "gallery" or "work"):\n  ' + skipped.map(rel).join('\n  '));
-  console.log('\nGallery tiles in index.html need width/height = the "thumb" size above.');
+  if (logo) {
+    // trim the empty transparent border, keep the alpha channel, never touch the artwork itself
+    const trimmed = await sharp(logo).trim().png().toBuffer();
+    const l = await sharp(trimmed).resize({ height: LOGO_H, withoutEnlargement: true })
+      .png({ compressionLevel: 9, palette: true, quality: 95, effort: 10 }).toFile(path.join(REPO, 'images', 'logo.png'));
+    // home-screen icon: the logo is wide, so it sits on white with some padding
+    await sharp(trimmed).resize(156, 156, { fit: 'contain', background: '#ffffff' })
+      .extend({ top: 12, bottom: 12, left: 12, right: 12, background: '#ffffff' }).flatten({ background: '#ffffff' })
+      .png({ compressionLevel: 9 }).toFile(path.join(REPO, 'images', 'apple-touch-icon.png'));
+    console.log('Logo:\n  ' + rel(logo).padEnd(28) + ' -> images/logo.png  ' + l.width + 'x' + l.height + ', images/apple-touch-icon.png 180x180');
+  }
+  if (skipped.length) console.log('Skipped (name has no "story", "gallery", "work" or "logo"):\n  ' + skipped.map(rel).join('\n  '));
+  console.log('\nFilm-strip frames in index.html need width/height = the "thumb" size above.');
 })().catch(e => { console.error(e); process.exit(1); });

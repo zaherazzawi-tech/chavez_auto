@@ -9,13 +9,14 @@ Plain HTML, CSS and JavaScript. No build step: the site itself has no dependenci
 ```
 index.html                      the page
 css/styles.css                  all styles (font: Archivo, from Google Fonts)
-js/main.js                      menu, live open/closed hours, Our Work lightbox, logo and story photo fallbacks
+js/main.js                      menu, live open/closed hours, Our Work film strip + lightbox, review "Read more", logo and story photo fallbacks
 images/hero.webp                hero background photo
-images/favicon.svg
-images/logo.png                 (optional, add later) your logo, see "Logo" below
+images/favicon.svg              browser tab icon
+images/apple-touch-icon.png     180x180 home-screen icon (made from the logo)
+images/logo.png                 the logo (header, mobile menu, footer), see "Logo" below
 images/story/story-1..3.webp    Our Story photos
 images/gallery/work-NN.webp     Our Work photos, full size (opened in the lightbox)
-images/gallery/thumbs/work-NN.webp   Our Work grid thumbnails (600x600 square)
+images/gallery/thumbs/work-NN.webp   Our Work film-strip frames (704x528, 4:3)
 scripts/optimize-images.js      turns original photos into the web images above
 ```
 
@@ -36,7 +37,8 @@ There is no contact form. The site steers visitors to call (949) 633-1794 or wal
 
 - **Hours:** edit the `HOURS` object at the top of the hours section in `js/main.js`. Each day is `[open, close]` in minutes after midnight (`420` = 7:00 AM, `840` = 2:00 PM, `990` = 4:30 PM), or `null` when closed. Day `0` is Sunday. Times are Pacific. Current hours: Mon–Fri 7 AM – 4:30 PM, Sat 7 AM – 2 PM, Sun closed. If you change them, also update `openingHoursSpecification` in the `application/ld+json` block in the `<head>` of `index.html`.
 - **Yelp link:** `https://www.yelp.com/biz/chavez-automotive-repair-mission-viejo` appears in three places in `index.html`: the "See us on Yelp" button in the hero, the "See us on Yelp" link in the "Call or stop by" panel, and the "Yelp" link in the footer. Search for `yelp.com` to change all three.
-- **Hero tagline:** the `<p class="lede">` in the hero in `index.html`.
+- **Hero:** the old tagline was removed. An empty `<div class="hero-spacer">` keeps its space so the buttons and cards don't move; delete it (and `.hero-spacer` in `css/styles.css`) if you want the buttons to sit higher.
+- **Reviews:** the `#reviews` section in `index.html`. Each review is a `<figure class="review">`; copy one to add another. Give long ones `rv-clamp` on the `<blockquote>` plus a `rv-more` button (see Nadine's or Michael's) and they get cut to about 6 lines with a "Read more" toggle. There is deliberately no review markup in the JSON-LD.
 - **Phone, address, email, copy:** edit `index.html` directly. The phone number and directions link also appear in the mobile bottom bar at the end of the page.
 
 ## Photos
@@ -44,12 +46,14 @@ There is no contact form. The site steers visitors to call (949) 633-1794 or wal
 Original photos are **not** kept in this repo. They live in a folder next to it, `../photo-originals`
 (for example `Dev/Chavez/photo-originals` beside `Dev/Chavez/chavez-automotive-site`), so the repo stays small.
 The script reads that folder and writes web-ready copies into `images/`: auto-rotated, every bit of metadata
-removed (including GPS location), at most 1600px on the long edge, WebP quality 80, plus 600x600 square thumbnails.
+removed (including GPS location), at most 1600px on the long edge, WebP quality 80, plus 704x528 (4:3) film-strip frames.
+It also turns `logo.png` into `images/logo.png` and `images/apple-touch-icon.png`.
 
 How the script sorts originals, by file name (or sub-folder name):
 
 - name contains **`story`** → Our Story. A name with `main` goes first (the large frame), then by the number in the name. The first 3 fill the frames; any more go to the gallery.
 - name contains **`gallery`** or **`work`** → Our Work, in number order (`gallery_1`, `gallery_2`, ...).
+- name contains **`logo`** → the logo (trimmed, 150px tall, transparency kept; the original is not changed).
 - anything else is skipped and listed.
 
 ### Run the script
@@ -60,19 +64,23 @@ npm install                 # first time only (installs sharp)
 node optimize-images.js     # or: npm run optimize-images
 ```
 
-It rebuilds `images/story/` and `images/gallery/` from scratch each time and prints what went where, including each thumbnail's size.
+It rebuilds `images/story/` and `images/gallery/` from scratch each time and prints what went where, including each frame's size.
 
 ### Add more photos to Our Work
 
+Our Work is a film strip that slides slowly right to left (about 50 seconds per full set; change `SECONDS_PER_SET` in `js/main.js`).
+It pauses on hover and while a finger is on it, can be dragged, and opens a photo in the lightbox when clicked.
+With "reduce motion" turned on in the visitor's system settings it doesn't move and is simply swipeable.
+
 1. Put the original in `../photo-originals`, named with the next number, e.g. `gallery_10.jpg`.
 2. Run the script (above).
-3. In `index.html`, find the `work-grid` and copy the last `<a class="work-tile">` line, changing the number in all three places and the photo number in the alt text:
+3. In `index.html`, find the `film-track` and copy the last `<a class="film-frame">` line, changing the number in all three places and the photo number in the alt text:
    ```html
-   <a class="work-tile" href="images/gallery/work-10.webp"><img src="images/gallery/thumbs/work-10.webp" width="600" height="600" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 10"></a>
+   <a class="film-frame" href="images/gallery/work-10.webp"><img src="images/gallery/thumbs/work-10.webp" width="704" height="528" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 10"></a>
    ```
-   Use the thumbnail size the script printed for `width`/`height` (600x600 unless the original was smaller).
+   Use the frame size the script printed for `width`/`height`. Keep `loading="lazy"` off the first 5 so the strip never starts empty.
 
-The lightbox picks up new tiles automatically. Once there are more than 9 tiles, the first 9 show and a "Show all photos" button reveals the rest.
+The loop copy and the lightbox pick up new frames automatically.
 
 ### Our Story photos
 
@@ -80,4 +88,5 @@ The lightbox picks up new tiles automatically. Once there are more than 9 tiles,
 
 ## Logo
 
-Drop a transparent-background logo at **`images/logo.png`** and it appears in the header automatically, replacing the gauge icon and "Chavez Automotive / REPAIR INC." wordmark (shown up to 44px tall on desktop, 36px on mobile). If you'd rather use an SVG, change the `src` of the `<img class="logo-img">` in the header in `index.html` to `images/logo.svg`. Until the file exists, the built-in gauge and wordmark stay.
+`images/logo.png` is made by the script from `../photo-originals/logo.png`. It shows in the header (60px tall on desktop, 44px on phones), at the bottom of the mobile menu and in the footer, replacing the built-in gauge icon and "Chavez Automotive / REPAIR INC." wordmark. If the file is ever missing, the gauge and wordmark come back automatically.
+The logo is too detailed to read at 16-32px, so the browser tab still uses `favicon.svg`; `apple-touch-icon.png` (180x180) is used when someone adds the site to a phone's home screen.

@@ -7,6 +7,7 @@
 <meta name="description" content="Chavez Automotive Repair is a local, family-owned shop in Mission Viejo, CA, in business for 33 years. Mechanical repair, maintenance and auto body under one roof. Call (949) 633-1794.">
 <meta name="theme-color" content="#0a3a73">
 <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,400..900;1,62..125,700..900&display=swap" rel="stylesheet">
@@ -56,11 +57,11 @@
       </svg>
       <span class="word">Chavez Automotive<small>REPAIR INC.</small></span>
       <!--
-        LOGO SLOT: drop a transparent-background logo at images/logo.png (or change this path to
-        images/logo.svg) and it appears here automatically. js/main.js shows it once it loads and
-        hides the gauge icon and wordmark above. If the file is missing, the gauge and wordmark stay.
+        LOGO: images/logo.png (made from ../photo-originals/logo.png by scripts/optimize-images.js).
+        It is used here, in the mobile menu sheet and in the footer. js/main.js shows each copy once it
+        loads and hides the gauge icon and wordmark above; if the file is missing, they stay.
       -->
-      <img class="logo-img" src="images/logo.png" alt="Chavez Automotive Repair" hidden>
+      <img class="logo-img" src="images/logo.png" width="288" height="150" alt="Chavez Automotive Repair" hidden>
     </a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mainnav" aria-label="Open menu">
       <span></span><span></span><span></span>
@@ -69,9 +70,11 @@
       <ul>
         <li><a href="#services">Services</a></li>
         <li><a href="#work">Our work</a></li>
+        <li><a href="#reviews">Reviews</a></li>
         <li><a href="#story">Our story</a></li>
         <li><a href="#contact">Hours &amp; visit</a></li>
         <li><a href="#location">Location</a></li>
+        <li class="sheet-logo" aria-hidden="true"><img class="logo-img" src="images/logo.png" width="288" height="150" alt="" hidden></li>
         <li><a class="call" href="tel:+19496331794">Call (949) 633-1794</a></li>
       </ul>
     </nav>
@@ -84,7 +87,7 @@
       <div class="hero-copy">
         <a class="stars" href="#reviews"><i aria-hidden="true">★★★★★</i> 4.8 from 46 Google reviews</a>
         <h1>Auto Repair in Mission&nbsp;Viejo</h1>
-        <p class="lede">From mechanical repair to autobody replacement, WE GOT YOU COVERED</p>
+        <div class="hero-spacer"></div><!-- empty on purpose: holds the space the old tagline used, so the buttons and cards stay put -->
         <div class="hero-actions">
           <a class="btn btn-red" href="tel:+19496331794"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1L6.6 10.8z"/></svg><span class="lbl-long">Call for an appointment</span><span class="lbl-short">Call now</span></a>
           <a class="btn btn-yelp" href="https://www.yelp.com/biz/chavez-automotive-repair-mission-viejo" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2l2.7 5.5 6 .9-4.35 4.25 1.03 6-5.38-2.83-5.38 2.83 1.03-6L3.3 9.6l6-.9z"/></svg>See us on Yelp</a>
@@ -130,24 +133,117 @@
         <h2 id="workTitle">Our Work</h2>
         <p>A look at recent jobs from our shop, from mechanical repair to auto body.</p>
       </div>
-      <!--
-        OUR WORK GRID: one <a class="work-tile"> per photo. href = full size (images/gallery/work-NN.webp),
-        <img> = square thumbnail (images/gallery/thumbs/work-NN.webp). Make both with scripts/optimize-images.js.
-        Tiles open in the lightbox (js/main.js). With more than 9 tiles, the rest hide behind "Show all photos".
-      -->
-      <div class="work-grid" id="workGrid">
-        <a class="work-tile" href="images/gallery/work-01.webp"><img src="images/gallery/thumbs/work-01.webp" width="348" height="348" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 1"></a>
-        <a class="work-tile" href="images/gallery/work-02.webp"><img src="images/gallery/thumbs/work-02.webp" width="300" height="400" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 2"></a>
-        <a class="work-tile" href="images/gallery/work-03.webp"><img src="images/gallery/thumbs/work-03.webp" width="300" height="400" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 3"></a>
-        <a class="work-tile" href="images/gallery/work-04.webp"><img src="images/gallery/thumbs/work-04.webp" width="600" height="600" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 4"></a>
-        <a class="work-tile" href="images/gallery/work-05.webp"><img src="images/gallery/thumbs/work-05.webp" width="600" height="600" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 5"></a>
-        <a class="work-tile" href="images/gallery/work-06.webp"><img src="images/gallery/thumbs/work-06.webp" width="600" height="600" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 6"></a>
-        <a class="work-tile" href="images/gallery/work-07.webp"><img src="images/gallery/thumbs/work-07.webp" width="600" height="600" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 7"></a>
-        <a class="work-tile" href="images/gallery/work-08.webp"><img src="images/gallery/thumbs/work-08.webp" width="600" height="600" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 8"></a>
-        <a class="work-tile" href="images/gallery/work-09.webp"><img src="images/gallery/thumbs/work-09.webp" width="600" height="600" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 9"></a>
+    </div>
+    <!--
+      OUR WORK FILM STRIP: one <a class="film-frame"> per photo. href = full size (images/gallery/work-NN.webp),
+      <img> = 4:3 frame (images/gallery/thumbs/work-NN.webp); make both with scripts/optimize-images.js.
+      js/main.js copies the set once (hidden from screen readers and the Tab key) so the strip loops seamlessly,
+      slides it, pauses it on hover / touch, lets people drag it, and opens a frame in the lightbox.
+      The first 5 frames load right away so the strip never starts empty; the rest load lazily.
+      With reduced motion (or no JavaScript) it is a plain sideways-scrolling strip.
+    -->
+    <div class="film" id="film">
+      <div class="film-track">
+        <a class="film-frame" href="images/gallery/work-01.webp"><img src="images/gallery/thumbs/work-01.webp" width="348" height="348" decoding="async" alt="Work by Chavez Automotive Repair, photo 1"></a>
+        <a class="film-frame" href="images/gallery/work-02.webp"><img src="images/gallery/thumbs/work-02.webp" width="300" height="400" decoding="async" alt="Work by Chavez Automotive Repair, photo 2"></a>
+        <a class="film-frame" href="images/gallery/work-03.webp"><img src="images/gallery/thumbs/work-03.webp" width="300" height="400" decoding="async" alt="Work by Chavez Automotive Repair, photo 3"></a>
+        <a class="film-frame" href="images/gallery/work-04.webp"><img src="images/gallery/thumbs/work-04.webp" width="704" height="528" decoding="async" alt="Work by Chavez Automotive Repair, photo 4"></a>
+        <a class="film-frame" href="images/gallery/work-05.webp"><img src="images/gallery/thumbs/work-05.webp" width="704" height="528" decoding="async" alt="Work by Chavez Automotive Repair, photo 5"></a>
+        <a class="film-frame" href="images/gallery/work-06.webp"><img src="images/gallery/thumbs/work-06.webp" width="704" height="528" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 6"></a>
+        <a class="film-frame" href="images/gallery/work-07.webp"><img src="images/gallery/thumbs/work-07.webp" width="704" height="528" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 7"></a>
+        <a class="film-frame" href="images/gallery/work-08.webp"><img src="images/gallery/thumbs/work-08.webp" width="704" height="528" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 8"></a>
+        <a class="film-frame" href="images/gallery/work-09.webp"><img src="images/gallery/thumbs/work-09.webp" width="704" height="528" loading="lazy" decoding="async" alt="Work by Chavez Automotive Repair, photo 9"></a>
       </div>
-      <div class="work-more" hidden><button class="btn btn-outline" type="button" id="workMore" aria-controls="workGrid" aria-expanded="false">Show all photos</button></div>
+    </div>
+    <div class="wrap">
       <p class="gal-cta">Want a quote on a job like this? Call <a href="tel:+19496331794">(949) 633-1794</a> or stop by the shop.</p>
+    </div>
+  </section>
+
+  <!--
+    REVIEWS: copied word for word from Yelp. Initials avatars only (no Yelp profile photos).
+    Long reviews (class rv-clamp) are cut to about 6 lines with a "Read more" button (js/main.js).
+    On phones the 5 smaller cards become a swipe row with dots, like the service cards.
+  -->
+  <section id="reviews" class="reviews" aria-labelledby="reviewsTitle">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 id="reviewsTitle">What Customers Say</h2>
+      </div>
+      <figure class="review review--featured">
+        <div class="rv-stars" role="img" aria-label="5 out of 5 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg></div>
+        <blockquote class="rv-text rv-clamp" id="rv1">
+          <p>Fidel and his shop are amazing! I can't recommend Chavez Auto Repair enough. Finding a mechanic you can truly trust isn't easy, but these guys are the real deal. They're incredibly honest about what your car actually needs--no upselling, no pressure, just straightforward advice.</p>
+          <p>What really stood out to me is how clearly they explain everything. They take the time to walk you through what's going on with your car in a way that actually makes sense, even if you're not super knowledgeable about vehicles. You never feel confused or left in the dark.</p>
+          <p>If you're looking for a shop that values transparency, integrity, and great customer service, Chavez Auto Repair is the place to go.</p>
+        </blockquote>
+        <button class="rv-more" type="button" aria-expanded="false" aria-controls="rv1" hidden>Read more</button>
+        <figcaption class="rv-who">
+          <span class="rv-avatar" aria-hidden="true">NA</span>
+          <span class="rv-meta"><strong>Nadine A.</strong><span>Laguna Hills, CA · <time datetime="2026-04-21">Apr 21, 2026</time></span></span>
+        </figcaption>
+        <p class="rv-src">Review from Yelp</p>
+      </figure>
+      <div class="rv-grid">
+        <figure class="review">
+          <div class="rv-stars" role="img" aria-label="5 out of 5 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg></div>
+          <blockquote class="rv-text" id="rv2">
+            <p>I'm so happy with my experience. I was recommended this location by a friend. Fidel helped me get my oil change completed and assured me of the state of my car for a long trip. I'm happy with the cost of services and the speed as well.</p>
+          </blockquote>
+          <figcaption class="rv-who">
+            <span class="rv-avatar" aria-hidden="true">CG</span>
+            <span class="rv-meta"><strong>Colleen Adelle G.</strong><span>Irvine, CA · <time datetime="2026-07-01">Jul 1, 2026</time></span></span>
+          </figcaption>
+          <p class="rv-src">Review from Yelp</p>
+        </figure>
+        <figure class="review">
+          <div class="rv-stars" role="img" aria-label="5 out of 5 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg></div>
+          <blockquote class="rv-text" id="rv3">
+            <p>I was looking for a new mechanic for my Outback and was very happy with my experience with Chavez Automotive Repair. Pricing was good and he was able to fit me in on short notice. I'll definitely be back!</p>
+          </blockquote>
+          <figcaption class="rv-who">
+            <span class="rv-avatar" aria-hidden="true">MG</span>
+            <span class="rv-meta"><strong>Mike G.</strong><span>Mission Viejo, CA · <time datetime="2026-06-19">Jun 19, 2026</time></span></span>
+          </figcaption>
+          <p class="rv-src">Review from Yelp</p>
+        </figure>
+        <figure class="review">
+          <div class="rv-stars" role="img" aria-label="5 out of 5 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg></div>
+          <blockquote class="rv-text" id="rv4">
+            <p>Fidel is the best and most trustworthy mechanic in town. I have been bringing both of my vehicles here since they opened. Fidel always answers his phone whenever I need him.</p>
+          </blockquote>
+          <figcaption class="rv-who">
+            <span class="rv-avatar" aria-hidden="true">BP</span>
+            <span class="rv-meta"><strong>Brendon P.</strong><span>Mission Viejo, CA · <time datetime="2026-03-24">Mar 24, 2026</time></span></span>
+          </figcaption>
+          <p class="rv-src">Review from Yelp</p>
+        </figure>
+        <figure class="review">
+          <div class="rv-stars" role="img" aria-label="5 out of 5 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg></div>
+          <blockquote class="rv-text" id="rv5">
+            <p>Really great service and care for car &amp; customer. Fidel was extremely professional &amp; explained everything thoroughly. Great experience overall. I'll be coming here from now on.</p>
+          </blockquote>
+          <figcaption class="rv-who">
+            <span class="rv-avatar" aria-hidden="true">MM</span>
+            <span class="rv-meta"><strong>Matthew M.</strong><span>Laguna Niguel, CA · <time datetime="2026-01-19">Jan 19, 2026</time></span></span>
+          </figcaption>
+          <p class="rv-src">Review from Yelp</p>
+        </figure>
+        <figure class="review">
+          <div class="rv-stars" role="img" aria-label="5 out of 5 stars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg></div>
+          <blockquote class="rv-text rv-clamp" id="rv6">
+            <p>Chavez Auto Repair (C.A.R.) is the real deal!!! Fidel takes great pride in his work and does a thorough job in assuring that your car is running at its tip top capacity. I just got my oil changed my tires rotated and my rear brakes replaced and I was riding down the highway and it felt like I was driving on a cloud. It was so smooth and I could tell that there was an incredible difference in my ride.</p>
+            <p>I like that the lobby is clean. There's coffee. The repair area is small yet personal and Fidel is able to take quality time with you and your car to assure it's running at its very best. His motto is very true, "Giving you peace of mind at a reasonable cost." Chavez Auto repair is your One-Stop shop for all of your car's maintenance needs.</p>
+          </blockquote>
+          <button class="rv-more" type="button" aria-expanded="false" aria-controls="rv6" hidden>Read more</button>
+          <figcaption class="rv-who">
+            <span class="rv-avatar" aria-hidden="true">MB</span>
+            <span class="rv-meta"><strong>Michael B.</strong><span>Aliso Viejo, CA · <time datetime="2025-02-19">Feb 19, 2025</time></span></span>
+          </figcaption>
+          <p class="rv-src">Review from Yelp</p>
+        </figure>
+      </div>
+      <div class="rv-cta"><a class="btn btn-outline" href="https://www.yelp.com/biz/chavez-automotive-repair-mission-viejo" target="_blank" rel="noopener">Read more reviews on Yelp</a></div>
     </div>
   </section>
 
@@ -178,7 +274,7 @@
     </div>
   </section>
 
-  <div class="trust" id="reviews">
+  <div class="trust">
     <div class="wrap">
       <div><div class="big">33</div><div class="lbl">Years in business</div></div>
       <div><div class="big">4.8 ★</div><div class="lbl">Google rating</div></div>
@@ -241,7 +337,7 @@
 
 <footer>
   <div class="wrap">
-    <span>© <span id="yr"></span> Chavez Automotive Repair Inc. · Mission Viejo, CA</span>
+    <span class="foot-brand"><img class="logo-img" src="images/logo.png" width="288" height="150" alt="Chavez Automotive Repair" hidden><span>© <span id="yr"></span> Chavez Automotive Repair Inc. · Mission Viejo, CA</span></span>
     <span class="foot-links"><a href="tel:+19496331794">(949) 633-1794</a><span aria-hidden="true">·</span><a href="https://www.yelp.com/biz/chavez-automotive-repair-mission-viejo" target="_blank" rel="noopener">Yelp</a></span>
   </div>
 </footer>
