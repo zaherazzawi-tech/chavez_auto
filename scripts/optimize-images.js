@@ -9,7 +9,6 @@
     images/gallery/work-01.webp ...       Our Work full-size (max 1600px long edge)
     images/gallery/thumbs/work-01.webp    Our Work film-strip frames (704x528, 4:3 crop)
     images/logo.png                       the logo, transparent padding trimmed, 150px tall
-    images/apple-touch-icon.png           180x180 home-screen icon (logo on white)
 
   Sorting (by file name, or by sub-folder name):
     - names containing "story"   -> story photos. A name containing "main" comes first,
@@ -93,11 +92,7 @@ async function save(input, file, opts) {
     const trimmed = await sharp(logo).trim().png().toBuffer();
     const l = await sharp(trimmed).resize({ height: LOGO_H, withoutEnlargement: true })
       .png({ compressionLevel: 9, palette: true, quality: 95, effort: 10 }).toFile(path.join(REPO, 'images', 'logo.png'));
-    // home-screen icon: the logo is wide, so it sits on white with some padding
-    await sharp(trimmed).resize(156, 156, { fit: 'contain', background: '#ffffff' })
-      .extend({ top: 12, bottom: 12, left: 12, right: 12, background: '#ffffff' }).flatten({ background: '#ffffff' })
-      .png({ compressionLevel: 9 }).toFile(path.join(REPO, 'images', 'apple-touch-icon.png'));
-    console.log('Logo:\n  ' + rel(logo).padEnd(28) + ' -> images/logo.png  ' + l.width + 'x' + l.height + ', images/apple-touch-icon.png 180x180');
+    console.log('Logo:\n  ' + rel(logo).padEnd(28) + ' -> images/logo.png  ' + l.width + 'x' + l.height);
   }
   if (skipped.length) console.log('Skipped (name has no "story", "gallery", "work" or "logo"):\n  ' + skipped.map(rel).join('\n  '));
   console.log('\nFilm-strip frames in index.html need width/height = the "thumb" size above.');

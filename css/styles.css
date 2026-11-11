@@ -64,7 +64,7 @@ nav.main a.call:hover{background:#c92c21}
 .stars{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 14px 5px 10px;margin-bottom:20px;text-decoration:none}
 .stars i{color:var(--yellow);font-style:normal;letter-spacing:1px}
 .hero h1{font-size:clamp(44px,6.4vw,72px);font-weight:800;letter-spacing:-.03em;text-shadow:0 2px 18px rgba(0,0,0,.4)}
-.hero-spacer{height:calc(18px + 2 * 22px * 1.2 + 30px)}
+.hero h1 + .hero-actions{margin-top:28px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font:600 15px/1 "Archivo",sans-serif;letter-spacing:.01em;text-decoration:none;border:0;border-radius:999px;padding:16px 28px;cursor:pointer}
 .btn-red{background:var(--red);color:#fff;box-shadow:0 6px 18px rgba(230,58,46,.35)}
 .btn-red:hover{background:#c92c21}
@@ -238,7 +238,7 @@ html.lb-open,html.lb-open body{overflow:hidden}
 .visit-now{margin:22px 0 0}
 .perks{margin:10px 0 0;font-size:15px;color:var(--muted)}
 .ask{margin:22px 0 0;padding-top:16px;border-top:1px solid var(--line);font-size:15px;color:var(--muted)}
-.ask a{color:var(--blue);font-weight:600;word-break:break-all}
+.ask a{color:var(--blue);font-weight:600;white-space:nowrap}
 
 
 /* Map */
@@ -319,7 +319,7 @@ footer a:hover{text-decoration:underline}
   .stars{position:relative;font-size:13px;gap:6px;padding:4px 12px 4px 9px;margin-bottom:24px}
   .stars::after{content:"";position:absolute;inset:-8px 0}
   .hero h1{font-size:40px;line-height:1;letter-spacing:-.025em}
-  .hero-spacer{height:calc(14px + 2 * 18px * 1.25 + 28px)} /* same space the 2-line tagline took: 87px */
+  .hero h1 + .hero-actions{margin-top:22px}
   .hero-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .hero-actions .btn{min-width:0;min-height:52px;padding:0 10px;gap:7px;font-size:15.5px;white-space:nowrap}
   .hero-actions .btn svg{width:17px;height:17px;flex:none}
@@ -409,7 +409,6 @@ footer a:hover{text-decoration:underline}
   .visit-now{margin-top:16px;font-size:14px}
   .perks{margin-top:8px;font-size:14px}
   .ask{margin-top:16px;padding-top:14px;font-size:14px}
-  .ask a{display:inline-block;word-break:normal}
 
   /* Map */
   .map-head{padding:56px 0 24px}
