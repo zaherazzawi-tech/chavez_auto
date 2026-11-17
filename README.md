@@ -39,7 +39,7 @@ There is no contact form and no email address on the site. Everything steers vis
 
 - **Hours:** edit the `HOURS` object at the top of the hours section in `js/main.js`. Each day is `[open, close]` in minutes after midnight (`420` = 7:00 AM, `840` = 2:00 PM, `990` = 4:30 PM), or `null` when closed. Day `0` is Sunday. Times are Pacific. Current hours: Mon–Fri 7 AM – 4:30 PM, Sat 7 AM – 2 PM, Sun closed. If you change them, also update `openingHoursSpecification` in the `application/ld+json` block in the `<head>` of `index.html`.
 - **Yelp link:** `https://www.yelp.com/biz/chavez-automotive-repair-mission-viejo` appears in three places in `index.html`: the "See us on Yelp" button in the hero, the "See us on Yelp" link in the "Call or stop by" panel, and the "Yelp" link in the footer. Search for `yelp.com` to change all three.
-- **Hero:** heading, then the call/Yelp buttons right under it (28px gap on desktop, 22px on phones: `.hero h1 + .hero-actions` in `css/styles.css`).
+- **Hero:** heading, the "Family-owned, serving OC for 33 years" line (`<p class="hero-sub">` in `index.html`), then the call/Yelp buttons (28px below that line on desktop, 22px on phones: `.hero-sub` in `css/styles.css`).
 - **Reviews:** the `#reviews` section in `index.html`. Each review is a `<figure class="review">`; copy one to add another. Give long ones `rv-clamp` on the `<blockquote>` plus a `rv-more` button (see Nadine's or Michael's) and they get cut to about 6 lines with a "Read more" toggle. There is deliberately no review markup in the JSON-LD.
 - **Phone, address, copy:** edit `index.html` directly. The phone number and directions link also appear in the mobile bottom bar at the end of the page.
 
